@@ -1,0 +1,36 @@
+- name: "Creating Database for MySQL"
+  hosts: all
+  become: 'True'
+  vars:
+    db_name: "mr_dbname"
+    db_password: "mr_ dbpassword"
+    db_user: "mr_dbusername"
+    mysql_password: ""
+  tasks:
+    - name: "install acl"
+      yum:
+        name: acl
+        state: present
+
+    - name: "Create database"
+      mysql_db:
+        login_unix_socket: "/var/lib/mysql/mysql.sock"
+        state: present
+        name: "{{ db_name }}"
+        login_user: root
+        login_password: "{{ mysql_password }}"
+      become: yes
+      become_user: mysql
+
+    - name: "Create db user"
+      mysql_user:
+        state: present
+        name: "{{ db_user }}"
+        password: "{{ db_password }}"
+        login_user: root
+        login_password: "{{ mysql_password }}"
+        #update_password: no_log
+        priv: "*.*:ALL,GRANT"
+        check_implicit_admin: yes
+      become: yes
+      become_user: mysql

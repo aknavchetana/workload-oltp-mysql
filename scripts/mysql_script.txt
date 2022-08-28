@@ -1,0 +1,60 @@
+HammerDB Installation:
+
+wget https://github.com/TPC-Council/HammerDB/releases/download/v4.1/HammerDB-4.1-Linux.tar.gz
+tar -zxvf HammerDB-4.1-Linux.tar.gz 
+cd HammerDB-4.1
+./hammerdbcli
+
+MySQL Installation :-
+
+sudo apt install mysql-server
+sudo apt install libmysqlclient-dev
+sudo mysql_secure_installation  #root password set as 'P@55w0rd'
+
+
+
+MySQL DB Creation :-
+
+sudo mysql or mysql -u root -p    #enter into mysql CLI
+create database m_dbname
+CREATE USER 'm_dbusername'@'localhost' IDENTIFIED BY 'P@55w0rd';
+GRANT ALL PRIVILEGES ON *.* TO 'm_dbusername'@'localhost';
+FLUSH PRIVILEGES;
+
+
+
+Running HammerDB :-
+
+Mysql run Workload -
+
+dbset db mysql
+diset connection mysql_host localhost
+diset connection mysql_port 3306
+diset tpcc mysql_user m_dbusername
+diset tpcc mysql_pass P@55w0rd
+diset tpcc mysql_count_ware 1000
+diset tpcc mysql_partition true
+diset tpcc mysql_num_vu 256
+diset tpcc mysql_storage_engine innodb
+print dict
+vuset logtotemp 1
+vuset unique 1
+buildschema
+
+Mysql Test run-
+
+dbset db mysql
+diset connection mysql_host localhost
+diset connection mysql_port 3306
+diset tpcc mysql_driver timed
+diset tpcc mysql_prepared false
+diset tpcc mysql_rampup 2
+diset tpcc mysql_duration 5
+vuset logtotemp 1
+vuset unique 1
+loadscript
+vuset vu 64
+vucreate
+vurun
+runtimer 500
+vudestroy

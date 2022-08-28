@@ -1,0 +1,48 @@
+- name: "Install MySQL"
+  hosts: all
+  become: yes
+  become_user: root
+  tasks:
+    - name: 'Add the official repository of MySQL to install the MySQL community server'
+      shell: echo $(rpm -ivh https://dev.mysql.com/get/mysql80-community-release-el8.1.noarch.rpm)
+
+    - name: 'Make sure the MySQL repository has been added and enabled by using the following command.'
+      shell: echo $(dnf repolist all | grep mysql | grep enabled)
+
+    - name: 'install python3-pip'
+      dnf: "name=python3-pip state=present"
+      become: yes
+      become_user: root
+
+    - name: install python3-dev
+      dnf:
+        name=python3-devel
+        state=latest
+      become: yes
+      become_user: root
+
+    - name: 'install pymysql'
+      shell: echo $(pip3 install PyMySQL)
+      become: yes
+      become_user: root
+
+    - name: 'install mysql-python'
+      shell: echo $(pip install MySQL-python)
+      become: yes
+      become_user: root
+
+    - name: 'Install mysql'
+      shell: echo $(dnf install -y --disablerepo=rhel-8-for-x86_64-appstream-rpms mysql-community-server)
+
+    - name: 'install mysql-server'
+      #shell: echo $(sudo yum install mysql-server)
+      yum: name=mysql-server state=present
+      become: yes
+      become_user: root
+
+    - name: 'Start the MySQL service'
+      #service:
+      #name=mysqld
+        #state=started
+        #enabled=yes
+      shell: echo $(sudo service mysqld start)

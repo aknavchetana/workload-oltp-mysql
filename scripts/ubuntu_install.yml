@@ -1,0 +1,40 @@
+- name: "Install MySQL"
+  hosts: all
+  become: 'True'
+  tasks:
+  - name: Update and upgrade apt packages
+    apt:
+      upgrade: 'True'
+      update_cache: 'True'
+
+  - name: Install MySQL
+    apt:
+      name=mysql-server
+      state=latest
+
+  - name: install python3-pip
+    apt:
+     name=python3-pip
+
+  - name: pymysql
+    pip:
+     name: pymysql
+
+  - name: Install python3-dev
+    apt:
+      name=python3-dev
+      state=latest
+
+  - name: Install libmysqlclient-dev
+    apt:
+     name=libmysqlclient-dev
+     state=latest
+
+  - name: Install mysqlclient
+    pip:
+      name: mysqlclient
+
+  - name: Start the MySQL service
+    service:
+            name: mysql
+            state: started

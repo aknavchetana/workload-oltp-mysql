@@ -1,0 +1,49 @@
+- name: "Create Database for MySQL"
+  hosts: all
+  become: 'True'
+  vars:
+    db_name: "mu_dbname"
+    db_password: "mu_dbpassword"
+    db_user: "mu_dbusername"
+    mysql_password: "root"
+  tasks:
+    - name: "install acl"
+      apt:
+        name: acl
+        state: present
+
+    - name: "Create database"
+      mysql_db:
+        login_unix_socket: "/var/run/mysqld/mysqld.sock"
+        state: present
+        name: "{{ db_name }}"
+        login_user: root
+        login_password: "{{ mysql_password }}"
+      become: yes
+      become_user: root
+
+    - name: "Create db user"
+      mysql_user:
+        state: present
+        name: "{{ db_user }}"
+        password: "{{ db_password }}"
+        login_user: root
+        login_password: "{{ mysql_password }}"
+        login_unix_socket: "/var/run/mysqld/mysqld.sock"
+        #update_password: no_log
+        priv: "*.*:ALL,GRANT"
+        check_implicit_admin: yes
+      become: yes
+      become_user: root
+
+    - name: Setting up root credentials
+      mysql_user:
+        name: root
+        password: "root"
+        login_user: root
+        login_password: "{{ mysql_password }}"
+        host: localhost
+        login_unix_socket: /var/run/mysqld/mysqld.sock
+        priv: '*.*:ALL,GRANT'
+        check_implicit_admin: true
+        state: present
